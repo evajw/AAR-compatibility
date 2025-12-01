@@ -1,6 +1,9 @@
 /*This script in combination with the python script "AAR_excel_to_sql" and the excel file
 "" creates the SQL database necessary for the AAR compatibility software*/
 ----------------------------------------------------------------------------------
+CREATE DATABASE aar_comp_2;
+
+
 /*The tabel with all tankers*/
 CREATE TABLE IF NOT EXISTS tankers(
 	ID SERIAL PRIMARY KEY,
