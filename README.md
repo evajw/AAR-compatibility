@@ -28,7 +28,7 @@ git commit -m “Description of your changes”
 By commiting your changes your create a snapshot of your changes in the staging phase. This is where a new version of your local repository is created. Everything you have added to your add, will now end up in the commit. Make sure to give a description of your changes, as to make clear what adaptions have been done. 
 
 ```bash
-git pull origin main –rebase
+git pull origin main –-rebase
 ```
 By pulling the remote repository you get the latest version from GIT. BY using -rebase you build your local repository on the newest version of the remote repository. This will show all possible conflicts
 
