@@ -15,15 +15,19 @@
         <h2>Enter Text in Two Fields</h2>
         <form action="/submit" method="POST">
             <label for="input1">Tanker nation: </label>
-            <input type="text" id="input1" name="input1" placeholder="Tanker nation">
-            <label for="input2">Receiver nation: </label>
-            <input type="text" id="input2" name="input2" placeholder="receiver nation">
+            <input type="text" id="input1" name="input1" placeholder="Tanker nation" required>
+            <label for="input2">Tanker type: </label>
+            <input type="text" id="input2" name="input2" placeholder="tanker type" required>
+            <label for="input2">Tanker model: </label>
+            <input type="text" id="input3" name="input3" placeholder="tanker mode" required>
            
            
-            <label for="input3">Tanker model: </label>
-            <input type="text" id="input3" name="input3" placeholder="Tanker type">
-            <label for="input4">Receiver model: </label>
-            <input type="text" id="input4" name="input4" placeholder="Receiver type">
+            <label for="input4">Receiver nation: </label>
+            <input type="text" id="input4" name="input4" placeholder="Receiver nation" required>
+            <label for="input5">Receiver type: </label>
+            <input type="text" id="input5" name="input5" placeholder="Receiver type" required>
+            <label for="input6">Receiver model: </label>    
+            <input type="text" id="input6" name="input6" placeholder="Receiver model" required>
             <button type="submit">Submit</button>
         </form>
 
