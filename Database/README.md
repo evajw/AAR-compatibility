@@ -14,7 +14,7 @@ If you are working on one of the SRD's: please comment here. This way we can pre
 |---------------|-------------|---------|
 | Australia     | Eva         | No
 | Canada        |             | 
-| France        |             | 
-| Germany       |             | 
+| USA           | Mike        | No. F-22 first to go
+| MMF           | Mike        | No. Only start with KC-135 
 
 
