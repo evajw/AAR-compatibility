@@ -14,7 +14,7 @@ If you are working on one of the SRD's: please comment here. This way we can pre
 |---------------|-------------|---------|
 | Australia     | Eva         | No
 | Canada        |             | 
-| MMF           | Mike        | No. pod, EF-2000 done, F/A-18 next
+| MMF           | Mike        | Yes
 | USA           | Mike        | No. Only start with KC-135 
 
 
