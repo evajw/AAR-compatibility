@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 
 engine = create_engine('postgresql://postgres:ikwillerencoderen156@localhost:5432/aar_comp_2')
 BASE_DIR = os.path.dirname(__file__)
-excel_path = os.path.join(BASE_DIR, "AAR_matrix.xlsx")
+excel_path = os.path.join(BASE_DIR, "AAR_matrix_2.xlsx")
 
 
 #Het lezen van de tabellen in excel
