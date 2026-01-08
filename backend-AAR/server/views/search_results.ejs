@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Specifications Result</title>
+</head>
+    <% if (found) { %>
+        <h2>Specifications</h2>
+        <ul>
+            <li>c_tanker: <%= spec.c_tanker %></li>
+            <li>c_receiver: <%= spec.c_receiver %></li>
+            <li>v_srd_tanker: <%= spec.v_srd_tanker %></li>
+            <li>v_srd_receiver: <%= spec.v_srd_receiver %></li>
+            <li>boom_pod_BDA: <%= spec.boom_pod_BDA %></li>
+            <li>min_alt: <%= spec.min_alt %></li>
+            <li>max_alt: <%= spec.max_alt %></li>
+            <li>min_as: <%= spec.min_as %></li>
+            <li>max_as_kcas: <%= spec.max_as_kcas %></li>
+            <li>max_as_m: <%= spec.max_as_m %></li>
+            <li>fuel_flow_rate: <%= spec.fuel_flow_rate %></li>
+            <li>notes: <%= spec.notes %></li>
+        </ul>
+    <% } else { %>
+        <h2><%= message %></h2>
+    <% } %>
+
+    <a href="/">Go back to search</a>
+</body>
+</html>

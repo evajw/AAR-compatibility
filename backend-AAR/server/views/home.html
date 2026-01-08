@@ -36,5 +36,28 @@
             <li><a href="/form">Form</a></li>
             <li><a href="/home">Home</a></li>
         </ul>
+
+
+        <form action="/search" method="POST">
+            <label>Tanker Nation:</label>
+            <input type="text" name="tankerNation" required>
+
+            <label>Tanker Type:</label>
+            <input type="text" name="tankerType" required>
+
+            <label>Tanker Model:</label>
+            <input type="text" name="tankerModel" required>
+
+            <label>Receiver Nation:</label>
+            <input type="text" name="receiverNation" required>
+
+            <label>Receiver Type:</label>
+            <input type="text" name="receiverType" required>
+
+            <label>Receiver Model:</label>
+            <input type="text" name="receiverModel" required>
+
+            <button type="submit">Search</button>
+        </form>
     </body>
 </html>

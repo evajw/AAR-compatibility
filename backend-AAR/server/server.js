@@ -1,19 +1,10 @@
 const express = require("express");
 const pkg = require("pg");
-<<<<<<< HEAD
-=======
-const db = require('./db');
->>>>>>> database
 const app = express();
 const path = require("path");
-
 const { Pool } = pkg;
 const PORT = 3000;
 
-<<<<<<< HEAD
-=======
-
->>>>>>> database
 const pool = new Pool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -22,23 +13,25 @@ const pool = new Pool({
     port: process.env.DB_PORT
 });
 
-<<<<<<< HEAD
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-=======
-module.exports = pool;
->>>>>>> database
+
+//For seperating js files and create more overview it is possible to reroute in express using the following expression
+const tablesRouter = require('./tables')(pool);
+
+//Refering to using the tables.js file
+app.use('/tables', tablesRouter);
 
 //basic route
 app.get("/hello", (req, res) => {
     res.send("Hello from your Node.js backend");
 });
 
-
 //All routes
 app.get("/", async (req, res) => {
     res.sendFile(path.join(__dirname, "views", "home.html"));
 });
+
 
 app.get("/compatibility", async (req, res) => {
     res.sendFile(path.join(__dirname, "views", "compatibility.html"));
@@ -58,21 +51,10 @@ app.get("/home", (req, res) => {
     res.redirect("/")
 })
 
-//calling up the database
-app.get("/api/tankers", async (req, res) => {
-    try {
-        const result = await pool.query("SELECT * FROM tankers");
-        res.json(result.rows);
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Database error")
-}
-});
 
-<<<<<<< HEAD
 app.set("view engine", "ejs")
 
-app.post("/submit", (req, res) => {
+app.post("/submit", async (req, res) => {
     const {
         input1: tankerNation,
         input2: tankerType,
@@ -83,7 +65,7 @@ app.post("/submit", (req, res) => {
     } = req.body;
 
     try {
-        const result = await pool.query = (`
+        const result = await pool.query(`
             SELECT result FROM compatibility
             WHERE tanker_nation = $1
             AND tanker_type = $2
@@ -134,7 +116,7 @@ app.post("/submit", (req, res) => {
 //                 db.all("SELECT DISTINCT tanker_model FROM compatibility", (e3, tankerModel) => {
 //                     db.all("SELECT DISTINCT receiver_nation FROM compatibility", (e4, receiver) => {
 //                         db.all("SELECT DISTINCT receiver_type FROM compatibility", (e5, receiverType) => {
-//                             db.all("SELECT DISTINCT receiver_model FROM compatiblity", (e6, receiverModel))
+//                             db.all("SELECT DISTINCT receiver_model FROM compatibility", (e6, receiverModel))
 
 //                             res.render("index", {
 //                                 tanker,
@@ -153,40 +135,6 @@ app.post("/submit", (req, res) => {
 // });
 
 
-=======
-// Catch all other routes
-app.all('*', (req, res) => {
-  res.status(404).send('404 - Page not found');
-});
-
-
-//Handle form submission
-app.post('/specifications', async (req, res) => {
-  try {
-        const { tanker_nation, receiver} = req.body;
-
-    if (!tanker_nation || !tanker_model || !tanker_type ||
-            !receiver_nation || !receiver_model || !receiver_type) {
-            return res.status(400).json({ error: "Tanker and receiver are needed"})}
-        }
-
-        const [rows] = await db.query(
-        `select specifications * FROM specifications s
-        JOIN tankers t on s.c_tanker = t.model
-        JOIN receivers r on s.c_receiver = r.model
-        WHERE t.model =? and r.mode =?`
-        [tanker, receiver]);
-
-        if (rows.length === 0) {
-            return res.status(404).json({message: "no specifications found"})
-    }
-
-        res.json(rows); 
-    } catch (err)
-        {console.error(err);
-        res.status(500).json({ error: "server error"})
-});  
->>>>>>> database
 
 //Start server
 app.listen(PORT, () =>{
