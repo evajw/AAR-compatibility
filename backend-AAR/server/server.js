@@ -55,6 +55,38 @@ app.get("/api/tankers", async (req, res) => {
 }
 });
 
+// Catch all other routes
+app.all('*', (req, res) => {
+  res.status(404).send('404 - Page not found');
+});
+
+
+//Handle form submission
+app.post('/specifications', async (req, res) => {
+  try {
+        const { tanker_nation, receiver} = req.body;
+
+    if (!tanker_nation || !tanker_model || !tanker_type ||
+            !receiver_nation || !receiver_model || !receiver_type) {
+            return res.status(400).json({ error: "Tanker and receiver are needed"})}
+        }
+
+        const [rows] = await db.query(
+        `select specifications * FROM specifications s
+        JOIN tankers t on s.c_tanker = t.model
+        JOIN receivers r on s.c_receiver = r.model
+        WHERE t.model =? and r.mode =?`
+        [tanker, receiver]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({message: "no specifications found"})
+    }
+
+        res.json(rows); 
+    } catch (err)
+        {console.error(err);
+        res.status(500).json({ error: "server error"})
+});  
 
 //Start server
 app.listen(PORT, () =>{
