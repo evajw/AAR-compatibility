@@ -1,11 +1,19 @@
 const express = require("express");
 const pkg = require("pg");
+<<<<<<< HEAD
+=======
+const db = require('./db');
+>>>>>>> database
 const app = express();
 const path = require("path");
 
 const { Pool } = pkg;
 const PORT = 3000;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> database
 const pool = new Pool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -14,8 +22,12 @@ const pool = new Pool({
     port: process.env.DB_PORT
 });
 
+<<<<<<< HEAD
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+=======
+module.exports = pool;
+>>>>>>> database
 
 //basic route
 app.get("/hello", (req, res) => {
@@ -57,6 +69,7 @@ app.get("/api/tankers", async (req, res) => {
 }
 });
 
+<<<<<<< HEAD
 app.set("view engine", "ejs")
 
 app.post("/submit", (req, res) => {
@@ -140,6 +153,40 @@ app.post("/submit", (req, res) => {
 // });
 
 
+=======
+// Catch all other routes
+app.all('*', (req, res) => {
+  res.status(404).send('404 - Page not found');
+});
+
+
+//Handle form submission
+app.post('/specifications', async (req, res) => {
+  try {
+        const { tanker_nation, receiver} = req.body;
+
+    if (!tanker_nation || !tanker_model || !tanker_type ||
+            !receiver_nation || !receiver_model || !receiver_type) {
+            return res.status(400).json({ error: "Tanker and receiver are needed"})}
+        }
+
+        const [rows] = await db.query(
+        `select specifications * FROM specifications s
+        JOIN tankers t on s.c_tanker = t.model
+        JOIN receivers r on s.c_receiver = r.model
+        WHERE t.model =? and r.mode =?`
+        [tanker, receiver]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({message: "no specifications found"})
+    }
+
+        res.json(rows); 
+    } catch (err)
+        {console.error(err);
+        res.status(500).json({ error: "server error"})
+});  
+>>>>>>> database
 
 //Start server
 app.listen(PORT, () =>{
