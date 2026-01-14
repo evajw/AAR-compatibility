@@ -1,7 +1,6 @@
 const express = require('express')
 
 
-
 module.exports = (pool) => {
     const router = express.Router();
 
@@ -44,7 +43,7 @@ module.exports = (pool) => {
         }
     });
 
-    // GET /tables/specifications
+    // GET /tables/compatibility
     router.get("/compatibility", async (req, res) => {
         try {
             const result = await pool.query(`

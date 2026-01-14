@@ -16,6 +16,15 @@ const pool = new Pool({
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.set('view engine', 'ejs');
+
+//Logging all the browser requests in the terminal. This is a control on the proper working of the server
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
+
 //For seperating js files and create more overview it is possible to reroute in express using the following expression
 const tablesRouter = require('./tables')(pool);
 
@@ -24,6 +33,7 @@ app.use('/tables', tablesRouter);
 
 //basic route
 app.get("/hello", (req, res) => {
+    console.log("Hello");
     res.send("Hello from your Node.js backend");
 });
 
@@ -52,7 +62,6 @@ app.get("/home", (req, res) => {
 })
 
 
-app.set("view engine", "ejs")
 
 app.post("/submit", async (req, res) => {
     const {
@@ -109,30 +118,87 @@ app.post("/submit", async (req, res) => {
     }    
 });
 
-// app.get("/", (req, res) => {
-//     db.serialize(() => {
-//         db.all("SELECT DISTINCT tanker_nation FROM compatibility", (e1, tanker) => {
-//             db.all("SELECT DISTINCT tanker_type FROM compatibility", (e2, tankerType) => {
-//                 db.all("SELECT DISTINCT tanker_model FROM compatibility", (e3, tankerModel) => {
-//                     db.all("SELECT DISTINCT receiver_nation FROM compatibility", (e4, receiver) => {
-//                         db.all("SELECT DISTINCT receiver_type FROM compatibility", (e5, receiverType) => {
-//                             db.all("SELECT DISTINCT receiver_model FROM compatibility", (e6, receiverModel))
+app.post("/search", async (req, res) => {
+    console.log("POST /search received:", req.body)
+    const {
+        tankerNation,
+        tankerType,
+        tankerModel,
+        receiverNation,
+        receiverType,
+        receiverModel
+    } = req.body;
 
-//                             res.render("index", {
-//                                 tanker,
-//                                 tankerType,
-//                                 tankerModel,
-//                                 receiver,
-//                                 receiverType,
-//                                 receiverModel
-//                             });
-//                         });     
-//                     });
-//                 });
-//             });
-//         });
-//     });
-// });
+    try {
+        // Find the matching compatibility
+        const compResult = await pool.query(
+            `
+            SELECT c.id AS comp_id
+            FROM compatibility c
+            JOIN tankers t ON c.tanker_id = t.id
+            JOIN receivers r ON c.receiver_id = r.id
+            WHERE t.nation = $1
+              AND t.type = $2
+              AND t.model = $3
+              AND r.nation = $4
+              AND r.type = $5
+              AND r.model = $6
+            `,
+            [tankerNation, tankerType, tankerModel, receiverNation, receiverType, receiverModel]
+        );
+
+        if (compResult.rows.length === 0) {
+            return res.render("search_results", { found: false, message: "No matching compatibility found." });
+        }
+
+        const compId = compResult.rows[0].comp_id;
+
+        // Get the specifications for this compatibility
+        const specResult = await pool.query(
+            "SELECT * FROM specifications WHERE compatibility_id = $1",
+            [compId]
+        );
+
+        if (specResult.rows.length === 0) {
+            return res.render("search_results", { found: false, message: "No specifications found for this combination." });
+        }
+
+        res.render("search_results", { found: true, spec: specResult.rows[0] });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).render("search_results", { found: false, message: "Database error" });
+    }
+});
+
+app.post('/api/get-valid-options', async (req, res) => {
+    const { t_nation, t_model, t_type, r_nation, r_model, r_type } = req.body;
+    
+    // We build a query that joins everything to see what is still 'possible'
+    // This query looks at the compatibility table and returns all valid unique combinations
+    let query = `
+        SELECT 
+            t.nation as t_nation, t.model as t_model, t.type as t_type,
+            r.nation as r_nation, r.model as r_model, r.type as r_type
+        FROM compatibility c
+        JOIN tankers t ON c.tanker_id = t.id
+        JOIN receivers r ON c.receiver_id = r.id
+        WHERE 1=1
+    `;
+    
+    // Add filters only if the user has selected them
+    const params = [];
+    if (t_nation) { params.push(t_nation); query += ` AND t.nation = $${params.length}`; }
+    if (t_model) { params.push(t_model); query += ` AND t.model = $${params.length}`; }
+    // ... repeat for all 6 fields ...
+
+    try {
+        const result = await pool.query(query, params);
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json(err.message);
+    }
+});
 
 
 
