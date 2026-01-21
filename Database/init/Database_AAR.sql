@@ -42,17 +42,20 @@ INSERT INTO compatibility (tanker_id, receiver_id)
 	CROSS JOIN receivers r
 	ON CONFLICT (tanker_id, receiver_id) DO NOTHING;
 	
----------------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS specifications (
+DROP TABLE IF EXISTS specifications;---------------------------------------------------------------------------------
+CREATE TABLE specifications (
     id SERIAL PRIMARY KEY,
     compatibility_id INT NOT NULL REFERENCES compatibility(id) ON DELETE CASCADE,
 	c_tanker TEXT,
 	c_receiver TEXT,
-    boom_drogue TEXT,
+	v_srd_tanker TEXT,
+	v_srd_receiver TEXT,
+    boom_pod_BDA TEXT,
     min_alt INT,
     max_alt INT,
     min_as INT,
-    max_as INT,
+    max_as_kcas INT,
+	max_as_m INT,
     fuel_flow_rate INT,
     notes TEXT
 );
