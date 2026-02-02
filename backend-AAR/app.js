@@ -1,7 +1,8 @@
 // src/app.js
 const express = require('express');
-const routes = require('./server/routes');
-const requestLogger = require('./server/middlewares/requestlogger.middleware');
+const routes = require('./server/routes/index.routes');
+const requestlogger = require('./server/middlewares/requestlogger.middleware');
+const errorMiddleware = require('./server/middlewares/error.middleware');
 
 const app = express();
 

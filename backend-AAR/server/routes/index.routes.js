@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
 router.use('/tables', require('./tables.routes'));
-router.use('/', require('./compatibility.routes'));
-
+router.use('/compatibility', require('./compatibility.routes'));
+router.use('/', require('./home.routes') );
 module.exports = router;

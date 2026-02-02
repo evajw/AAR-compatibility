@@ -1,6 +1,6 @@
 // src/routes/tables.routes.js
 const express = require('express');
-const controller = require('../controllers/tables.controller');
+const controller = require('../controllers/table.controller');
 
 const router = express.Router();
 
