@@ -1,11 +1,10 @@
 import './App.css'
-import PictureAAR from './Pictures/Picture AAR.jpg'
+import Login from './Pages/Login'
 
 function App() {
   return (
-    <div className="App">
-      <h1>AAR</h1>
-      <img src={PictureAAR}/>
+    <div className="app">
+      <Login />
     </div>
   )
 }
