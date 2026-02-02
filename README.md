@@ -6,7 +6,8 @@ For the software to run locally there are couple of softwares you need to instal
 
 1. Make sure you can run the project directory as a whole. For this Visual Studio code is advised: https://code.visualstudio.com/download
 2. As the excel to sql read-out is done by a python script, you should install python on your device: https://www.python.org/downloads/
-3. This python code needs several libraries. For this open your command prompt (or in Dutch "opdrachtprompt") on your device. First we need to check wether you already have the python library installer.
+3. Make sure to download the right extensions on Visual Studio Code (python, docker). Search for extensions with Ctrl+Shift+X  
+4. This python code needs several libraries. For this open your command prompt (or in Dutch "opdrachtprompt") on your device. First we need to check wether you already have the python library installer.
 Type in the command prompt:
 
 ```bash
@@ -100,9 +101,10 @@ Switching branches is not always possible. If you have been changing inputs in a
 ## Run the services
 
 Now you are ready use the repository! 
-1. Open docker application on your device. 
-2. Go to the "docker_compose.yml" file and click on "run all services" at the top of the file. 
-3. Your service will now be running. To check this, open a browser and enter: "localhost:3000".
+1. Open the docker.desktop application on your device.
+2. Open Visual Studio Code and in the left top corner of your screen open the folder with the git repository in it.
+3. Go to the "docker_compose.yml" file and click on "run all services" at the top of the file. 
+4. Your service will now be running. To check this, open a browser and enter: "localhost:3000".
 
 
 ## Database
