@@ -4,9 +4,10 @@ The application for AAR-compatibility serves as an easy method for checking spec
 ## Which software do you need?
 For the software to run locally there are couple of softwares you need to install.
 
-1. Firstly, make sure you can run the project directory as a whole. For this Visual Studio code is advised: https://code.visualstudio.com/download
+1. Make sure you can run the project directory as a whole. For this Visual Studio code is advised: https://code.visualstudio.com/download
 2. As the excel to sql read-out is done by a python script, you should install python on your device: https://www.python.org/downloads/
-3. This python code needs several libraries. For this open your command prompt (or in Dutch "opdrachtprompt") on your device. First we need to check wether you already have the python library installer.
+3. Make sure to download the right extensions on Visual Studio Code (python, docker). Search for extensions with Ctrl+Shift+X  
+4. This python code needs several libraries. For this open your command prompt (or in Dutch "opdrachtprompt") on your device. First we need to check wether you already have the python library installer.
 Type in the command prompt:
 
 ```bash
@@ -23,8 +24,12 @@ pip 25.3 from C:\Users\ejwes\AppData\Local\Packages\PythonSoftwareFoundation.Pyt
 ```bash
 pip install pandas
 pip install sqlalchemy
+pip install psycopg binary
+pip install openpyxl
 ```
-5. The software makes use of two services. The first service being postgreSQL and the second service being node.js as the back-end running on javascript. Instead of having to download all the software for these services, we are going to make use of docker.compose. This is a tool for defining and running multi-container applications. It runs all services internally. Download Docker: https://docs.docker.com/
+
+
+5. The software makes use of two services. The first service being postgreSQL and the second service being node.js as the back-end running on javascript. Instead of having to download all the software for these services, we are going to make use of docker.compose. This is a tool for defining and running multi-container applications. It runs all services internally. Download Docker: https://docs.docker.com/ If you have docker installed on your laptop, it might be necessary to download the upper extensions specifically into docker. See [database README](Database/README.md) for more details. 
 
 6. Lastly, you need git bash. This software allows you to communicate between your local and this online repository: https://git-scm.com/install/windows. 
 
@@ -73,18 +78,38 @@ git push origin main
 ```
 Now you can push your commit definitly to GIT. You can also change the directory "main" for another bash. This way you allow people to first check your work before you overwrite everything! 
 
+# Branches
+GIT works with branches. This allows the developer to work on different items in the application without having to "break" the already working functionalities. If you want to add something new it is **obligatory** to create a new branch. There might already be branches in your remote repository. To fetch all branches use the command:
+
+```bash
+git fetch
+```
+
+To create a new branch use the command:
+```bash
+git branch 'your_new_branch_name'
+```
+
+To switch between branches you can use the command:
+```bash
+git checkout 'your_branch_name'
+```
+
+Switching branches is not always possible. If you have been changing inputs in a certain branch, you might first need to commit your changes as explained above. Only after the remote and the local repositroy being are up-to-date with each other, will it be possible to switch branches. There are loopholes around this, but for safety measurements it is best not to do so, or you might loose track of your files. If you feel confident enough with GIT, feel free to explore the internet on how to accomplish this!
+
 
 ## Run the services
 
 Now you are ready use the repository! 
-1. Open docker application on your device. 
-2. Go to the "docker_compose.yml" file and click on "run all services" at the top of the file. 
-3. Your service will now be running. To check this, open a browser and enter: "localhost:3000".
+1. Open the docker.desktop application on your device.
+2. Open Visual Studio Code and in the left top corner of your screen open the folder with the git repository in it.
+3. Go to the "docker_compose.yml" file and click on "run all services" at the top of the file. 
+4. Your service will now be running. To check this, open a browser and enter: "localhost:3000".
 
 
 ## Database
 
-See [database README](database/README.md) for database details.
+See [database README](Database/README.md) for database details.
 
 
 
