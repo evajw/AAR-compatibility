@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> AAR compatibility results</title>
+        <link> rel="stylesheet" href="/style.css"
+    </head>
+
+    <body>
+        <h1> Compatibility Result</h1>
+
+        <p><strong>Tanker:</strong> <%= tankerNation %> - <%= tankerType %> - <%= tankerModel %> </p>
+        <p><strong>Receiver:</strong> <%= receiverNation %> - <%= receiverType %> - <%= receiverModel %> </p>
+    
+        <hr>
+        
+        <% if (found) { %>
+            <h2 style="color: green;"><%= result %></h2>
+        <% } else { %>
+             <h2 style= "color: red;"><%= message %></h2>
+        <% } %>
+        
+        <br>
+        <a href="'/"> Check another compatibility</a>
+
+    </body>
+</html>
