@@ -3,6 +3,7 @@ import Header from '../Components/Layout/Header'
 import Footer from '../Components/Layout/Footer'
 import AdminPage from './Admin'
 import EngineerPage from './Engineer'
+import PlannerPage from './Planner'
 import PictureAAR from '../Assets/Picture AAR.jpg'
 import '../Styles/login.css'
 
@@ -11,8 +12,8 @@ type Step = 'select' | 'login' | 'dashboard'
 
 const ROLE_OPTIONS: Array<{ key: Role; title: string }> = [
   { key: 'admin', title: 'Admin' },
-  { key: 'engineer', title: 'Engineer' },
-  { key: 'planner', title: 'Planner' },
+  { key: 'engineer', title: 'SRD Holder' },
+  { key: 'planner', title: 'Viewer' },
 ]
 
 const ROLE_DETAILS: Record<
@@ -26,35 +27,17 @@ const ROLE_DETAILS: Record<
     quick: 'Prioriteer accounts, rollen en audits.',
   },
   engineer: {
-    label: 'Engineer',
+    label: 'SRD Holder',
     intro: 'Je krijgt toegang tot technische flows en tooling.',
     highlight: 'Log in om je workbench te openen.',
     quick: "Werk aan tickets, risico's en releases.",
   },
   planner: {
-    label: 'Planner',
+    label: 'Vieuwer',
     intro: 'Je hebt directe toegang tot de planning.',
     highlight: 'Geen login nodig voor planners.',
     quick: 'Start direct met inplannen.',
   },
-}
-
-const DASHBOARD_CARDS: Record<Role, Array<{ title: string; body: string }>> = {
-  admin: [
-    { title: 'Team overzicht', body: 'Bekijk rollen, toegang en compliance.' },
-    { title: 'Rapportages', body: "Realtime KPI's en workflowstatus." },
-    { title: 'Systeemstatus', body: 'Check services en releasevensters.' },
-  ],
-  engineer: [
-    { title: 'Actieve tickets', body: 'Focus op urgente incidenten.' },
-    { title: 'Quality checks', body: 'Voer validaties en tests uit.' },
-    { title: 'Release board', body: 'Plan deploys en reviewmomenten.' },
-  ],
-  planner: [
-    { title: 'Dagplanning', body: 'Start met het inplannen van teams.' },
-    { title: 'Capaciteit', body: 'Balanceer resources en prioriteiten.' },
-    { title: 'Live updates', body: 'Zie direct welke taken opschuiven.' },
-  ],
 }
 
 type LoginCredentials = {
@@ -138,9 +121,7 @@ export default function Login() {
   }
 
   const currentRole = activeRole ? ROLE_DETAILS[activeRole] : null
-  const dashboardCards = activeRole ? DASHBOARD_CARDS[activeRole] : []
-  const showRolePage =
-    step === 'dashboard' && activeRole && activeRole !== 'planner'
+  const showRolePage = step === 'dashboard' && activeRole !== null
   const demoAccount = activeRole ? DEMO_ACCOUNTS[activeRole] : null
 
   return (
@@ -150,14 +131,15 @@ export default function Login() {
         {showRolePage ? (
           activeRole === 'admin' ? (
             <AdminPage onLogout={handleReset} />
-          ) : (
+          ) : activeRole === 'engineer' ? (
             <EngineerPage onLogout={handleReset} />
+          ) : (
+            <PlannerPage onLogout={handleReset} />
           )
         ) : (
           <section className="login-card" aria-live="polite">
             {step === 'select' && (
               <div className="step-panel">
-                <h1>Choose role</h1>
                 <div className="role-grid">
                   {ROLE_OPTIONS.map((role) => (
                     <button
@@ -229,33 +211,6 @@ export default function Login() {
                     </div>
                   </div>
                 </form>
-              </div>
-            )}
-
-            {step === 'dashboard' && currentRole && (
-              <div className="step-panel">
-                <div className="step-top">
-                  <div>
-                    <span className="role-pill">{currentRole.label}</span>
-                    <h2>Welkom, {currentRole.label}</h2>
-                    <p className="muted">{currentRole.intro}</p>
-                  </div>
-                  <button className="btn ghost" type="button" onClick={handleReset}>
-                    Uitloggen
-                  </button>
-                </div>
-                <div className="info-banner">
-                  <strong>{currentRole.highlight}</strong>
-                  <span>{currentRole.quick}</span>
-                </div>
-                <div className="dashboard-grid">
-                  {dashboardCards.map((card) => (
-                    <article key={card.title} className="dashboard-card">
-                      <h3>{card.title}</h3>
-                      <p className="muted">{card.body}</p>
-                    </article>
-                  ))}
-                </div>
               </div>
             )}
           </section>
