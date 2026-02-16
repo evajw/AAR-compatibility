@@ -21,9 +21,9 @@ If you are working on one of the SRD's: please comment here. This way we can pre
 
 | SRD           | Responsible | Done?   |
 |---------------|-------------|---------|
-| Australia     | Eva         | No
+| Australia     | Eva         | No (JAN 2026)
 | Canada        |             | 
-| MMF           | Mike        | Yes
+| MMF           | Mike        | Yes (FEB 2026)
 | USA           | Mike        | No. Only start with KC-135 
 
 
