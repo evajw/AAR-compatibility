@@ -53,11 +53,7 @@ CREATE TABLE specifications (
 	c_receiver TEXT,
 	v_srd_tanker TEXT,
 	v_srd_receiver TEXT,
-<<<<<<< HEAD
-    boom_pod_BDA TEXT,
-=======
     boom_pod_bda TEXT,
->>>>>>> backend
     min_alt INT,
     max_alt INT,
     min_as INT,

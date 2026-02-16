@@ -1,32 +1,17 @@
-import { useMemo, useState, type ChangeEvent, type FormEvent } from 'react'
+import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from 'react'
 import '../Styles/role-pages.css'
+import {
+  addSubmission,
+  loadSubmissions,
+  type EngineerFormValues,
+  type EngineerSubmission,
+} from '../Services/submissionService'
 
 type EngineerPageProps = {
   onLogout: () => void
 }
 
-type FormValues = {
-  nationOrganisation: string
-  aircraftType: string
-  aircraftModel: string
-  refuellingInterface: string
-  tankerSrdCategory: string
-  receiverSrdCategory: string
-  minimumFlightLevel: string
-  maximumFlightLevel: string
-  minimumKcas: string
-  maximumKcas: string
-  planningFuelTransferRate: string
-}
-
-type FormStatus = 'In beoordeling' | 'Goedgekeurd'
-
-type FormSubmission = FormValues & {
-  id: string
-  status: FormStatus
-}
-
-const EMPTY_FORM: FormValues = {
+const EMPTY_FORM: EngineerFormValues = {
   nationOrganisation: '',
   aircraftType: '',
   aircraftModel: '',
@@ -43,17 +28,22 @@ const EMPTY_FORM: FormValues = {
 const REFUEL_INTERFACE_OPTIONS = ['Boom', 'Pod', 'HDU', 'Centre Line (CL)']
 const SRD_CATEGORY_OPTIONS = ['CAT I', 'CAT II', 'CAT III']
 
-const createId = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`
-
+// Show the engineer form page.
 export default function EngineerPage({ onLogout }: EngineerPageProps) {
-  const [formValues, setFormValues] = useState<FormValues>(EMPTY_FORM)
-  const [submissions, setSubmissions] = useState<FormSubmission[]>([])
+  const [formValues, setFormValues] = useState<EngineerFormValues>(EMPTY_FORM)
+  const [submissions, setSubmissions] = useState<EngineerSubmission[]>([])
 
   const canSubmit = useMemo(
     () => Object.values(formValues).every((value) => value.trim().length > 0),
     [formValues],
   )
 
+  // Load saved submissions so Engineers can see decisions.
+  useEffect(() => {
+    setSubmissions(loadSubmissions())
+  }, [])
+
+  // Update a form field when the user changes a value.
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
@@ -61,32 +51,17 @@ export default function EngineerPage({ onLogout }: EngineerPageProps) {
     setFormValues((prev) => ({ ...prev, [name]: value }))
   }
 
+  // Save the submission so Admin can review it.
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!canSubmit) return
-
-    const nextSubmission: FormSubmission = {
-      ...formValues,
-      id: createId(),
-      status: 'In beoordeling',
-    }
-
-    setSubmissions((prev) => [nextSubmission, ...prev])
+    setSubmissions(addSubmission(formValues))
     setFormValues(EMPTY_FORM)
   }
 
+  // Clear all fields to start a new form.
   const handleReset = () => {
     setFormValues(EMPTY_FORM)
-  }
-
-  const handleApprove = (id: string) => {
-    setSubmissions((prev) =>
-      prev.map((submission) =>
-        submission.id === id
-          ? { ...submission, status: 'Goedgekeurd' }
-          : submission,
-      ),
-    )
   }
 
   return (
@@ -95,7 +70,6 @@ export default function EngineerPage({ onLogout }: EngineerPageProps) {
         <div>
           <span className="role-pill">Engineer</span>
           <h1 className="role-page__title">Engineer</h1>
-          
         </div>
         <button className="btn ghost" type="button" onClick={onLogout}>
           Uitloggen
@@ -103,7 +77,10 @@ export default function EngineerPage({ onLogout }: EngineerPageProps) {
       </header>
 
       <section className="role-card">
-                <form className="engineer-form" onSubmit={handleSubmit}>
+        <p className="planner-intro">
+          Fill in the form below and submit it for admin review.
+        </p>
+        <form className="engineer-form" onSubmit={handleSubmit}>
           <div className="engineer-form__grid">
             <label className="input-group">
               Nation / Org.
@@ -266,6 +243,9 @@ export default function EngineerPage({ onLogout }: EngineerPageProps) {
             {submissions.length} total
           </span>
         </div>
+        <p className="muted">
+          Track the status of each submission after the admin decision.
+        </p>
         {submissions.length === 0 ? (
           <p className="muted">Nog geen formulieren ingediend.</p>
         ) : (
@@ -356,6 +336,8 @@ export default function EngineerPage({ onLogout }: EngineerPageProps) {
                         className={`status-tag ${
                           submission.status === 'Goedgekeurd'
                             ? 'status-tag--approved'
+                            : submission.status === 'Afgewezen'
+                              ? 'status-tag--rejected'
                             : 'status-tag--pending'
                         }`}
                       >

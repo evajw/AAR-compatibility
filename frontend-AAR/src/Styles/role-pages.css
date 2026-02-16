@@ -6,7 +6,7 @@
 }
 
 .role-page {
-  width: min(1200px, 100%);
+  width: min(1500px, 100%);
   display: grid;
   gap: 1.5rem;
   color: #0f172a;
@@ -85,6 +85,108 @@
   gap: 1rem;
 }
 
+.planner-intro {
+  margin: 0;
+  color: #475569;
+}
+
+.planner-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.planner-form__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.planner-field {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  color: #0f172a;
+}
+
+.planner-field span {
+  font-weight: 600;
+}
+
+.planner-field input {
+  flex: 1;
+  min-width: 0;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  padding: 0.5rem 0.6rem;
+  background: #ffffff;
+  color: #0f172a;
+  outline: none;
+}
+
+.planner-field select {
+  flex: 1;
+  min-width: 0;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  padding: 0.5rem 0.6rem;
+  background: #ffffff;
+  color: #0f172a;
+  outline: none;
+}
+
+.planner-field input:focus,
+.planner-field select:focus {
+  border-color: #8ab9f1;
+  box-shadow: 0 0 0 3px rgba(138, 185, 241, 0.25);
+}
+
+.planner-error {
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-size: 0.9rem;
+}
+
+.planner-form__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.planner-compact__grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.planner-compact__field {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: #0f172a;
+}
+
+.planner-compact__field input,
+.planner-compact__field select {
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  padding: 0.55rem 0.65rem;
+  background: #ffffff;
+  color: #0f172a;
+  outline: none;
+}
+
+.planner-compact__field input:focus,
+.planner-compact__field select:focus {
+  border-color: #8ab9f1;
+  box-shadow: 0 0 0 3px rgba(138, 185, 241, 0.25);
+}
+
+
 .engineer-form__grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -149,6 +251,16 @@
   white-space: normal;
 }
 
+.planner-table th {
+  white-space: nowrap;
+  font-size: 0.72rem;
+  padding: 0.45rem 0.55rem;
+}
+
+.planner-table td {
+  padding: 0.45rem 0.55rem;
+}
+
 .status-tag {
   display: inline-flex;
   align-items: center;
@@ -204,6 +316,10 @@
   width: 10%;
 }
 
+.engineer-table .col-actions {
+  width: 14%;
+}
+
 .status-tag--pending {
   background: #fef3c7;
   border: 1px solid #fde68a;
@@ -216,9 +332,22 @@
   color: #166534;
 }
 
+.status-tag--rejected {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
 .btn.small {
   padding: 0.4rem 0.85rem;
   font-size: 0.85rem;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 @media (max-width: 1200px) {
@@ -281,11 +410,40 @@
   .role-summary__stats {
     grid-template-columns: 1fr;
   }
+
+  .planner-form__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .planner-compact__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 860px) {
   .engineer-form__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .planner-form__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .planner-form__footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .planner-compact__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .planner-compact__grid {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -13,11 +13,6 @@ const pool = new Pool({
     port: process.env.DB_PORT
 });
 
-<<<<<<< HEAD
-//basic route
-app.get("/hello", (req, res) => {
-    res.send("Hello from your Node.js backend");
-=======
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -27,7 +22,6 @@ app.set('view engine', 'ejs');
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();
->>>>>>> backend
 });
 
 
@@ -91,22 +85,6 @@ app.post("/submit", async (req, res) => {
             [tankerNation, tankerType, tankerModel, receiverNation, receiverType, receiverModel]
         );
 
-<<<<<<< HEAD
-// Catch all other routes
-app.all('*', (req, res) => {
-  res.status(404).send('404 - Page not found');
-});
-
-
-//Handle form submission
-app.post('/specifications', async (req, res) => {
-  try {
-        const { tanker_nation, receiver} = req.body;
-
-    if (!tanker_nation || !tanker_model || !tanker_type ||
-            !receiver_nation || !receiver_model || !receiver_type) {
-            return res.status(400).json({ error: "Tanker and receiver are needed"})}
-=======
         if (result.rows.length>0) {
             res.render("compatibility", {
                 found: true,
@@ -129,7 +107,6 @@ app.post('/specifications', async (req, res) => {
                 receiverModel,
                 message: "No compatibility data found"
             });
->>>>>>> backend
         }
 
     } catch (err) {
@@ -224,14 +201,6 @@ app.post('/api/get-valid-options', async (req, res) => {
 });
 
 
-<<<<<<< HEAD
-        res.json(rows); 
-    } catch (err)
-        {console.error(err);
-        res.status(500).json({ error: "server error"})
-});  
-=======
->>>>>>> backend
 
 //Start server
 app.listen(PORT, () =>{
