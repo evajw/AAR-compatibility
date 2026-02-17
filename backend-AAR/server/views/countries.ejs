@@ -1,0 +1,8 @@
+<h1>Select a Country</h1>
+<ul>
+  <% countries.forEach(c => { %>
+    <li>
+      <a href="/countries/<%= c.country %>/types"><%= c.country %></a>
+    </li>
+  <% }) %>
+</ul>

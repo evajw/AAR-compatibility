@@ -1,0 +1,8 @@
+<h1>Types in <%= country %></h1>
+<ul>
+  <% types.forEach(t => { %>
+    <li>
+      <a href="/countries/<%= country %>/types/<%= t.type %>/models"><%= t.type %></a>
+    </li>
+  <% }) %>
+</ul>
