@@ -1,27 +1,27 @@
 const TankerService = require('../services/specific_search.service');
 
 const TankerPageController = {
-  async showCountries(req, res) {
-    const countries = await TankerService.getCountries();
-    res.render('countries', { countries });
+  async showNations(req, res) {
+    const nations = await TankerService.getNations();
+    res.render('nations', { nations });
   },
 
   async showTypes(req, res) {
-    const country = req.params.country;
-    const types = await TankerService.getTypes(country);
-    res.render('types', { country, types });
+    const nation = req.params.nation;
+    const types = await TankerService.getTypes(nation);
+    res.render('types', { nation, types });
   },
 
   async showModels(req, res) {
-    const { country, type } = req.params;
-    const models = await TankerService.getModels(country, type);
-    res.render('models', { country, type, models });
+    const { nation, type } = req.params;
+    const models = await TankerService.getModels(nation, type);
+    res.render('models', { nation, type, models });
   },
 
   async showReceivers(req, res) {
-    const { country, type, model } = req.params;
-    const receivers = await TankerService.getCompatibleReceivers(country, type, model);
-    res.render('receivers', { country, type, model, receivers });
+    const { nation, type, model } = req.params;
+    const receivers = await TankerService.getCompatibleReceivers(nation, type, model);
+    res.render('receivers', { nation, type, model, receivers });
   },
 };
 

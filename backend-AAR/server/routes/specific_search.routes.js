@@ -3,7 +3,7 @@ const router = express.Router();
 const TankerController = require('../controllers/specific_search.controller');
 
 // Step 1 → 3 same as before
-router.get('/countries', TankerController.listCountries);
+router.get('/nations', TankerController.listNations);
 router.get('/types', TankerController.listTypes);
 router.get('/models', TankerController.listModels);
 

@@ -1,24 +1,24 @@
 const TankerModel = require('../models/specific_search.model');
 
 const TankerService = {
-  async getCountries() {
-    return await TankerModel.getCountries();
+  async getNations() {
+    return await TankerModel.getNations();
   },
 
-  async getTypes(country) {
-    if (!country) throw new Error('Country is required');
-    return await TankerModel.getTypesByCountry(country);
+  async getTypes(nation) {
+    if (!nation) throw new Error('Nation is required');
+    return await TankerModel.getTypesByNation(nation);
   },
 
-  async getModels(country, type) {
-    if (!country || !type) throw new Error('Country and Type are required');
-    return await TankerModel.getModelsByCountryAndType(country, type);
+  async getModels(nation, type) {
+    if (!nation || !type) throw new Error('Nation and Type are required');
+    return await TankerModel.getModelsByNationAndType(nation, type);
   },
 
-  async getCompatibleReceivers(country, type, model) {
-    if (!country || !type || !model)
-      throw new Error('Country, Type, and Model are required');
-    return await TankerModel.getCompatibleReceivers(country, type, model);
+  async getCompatibleReceivers(nation, type, model) {
+    if (!nation || !type || !model)
+      throw new Error('Nation, Type, and Model are required');
+    return await TankerModel.getCompatibleReceivers(nation, type, model);
   }
 };
 
