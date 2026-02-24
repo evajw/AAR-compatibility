@@ -1,12 +1,12 @@
-import { useMemo, useState, type ChangeEvent, type FormEvent } from 'react'
+﻿import { useMemo, useState, type ChangeEvent, type FormEvent } from 'react'
 import '../Styles/role-pages.css'
-import { searchPlanner, submitPlannerRequest } from '../Services/plannerService'
+import { searchViewer, submitViewerRequest } from '../Services/viewerService'
 
-type PlannerPageProps = {
+type ViewerPageProps = {
   onLogout: () => void
 }
 
-type PlannerFormValues = {
+type ViewerFormValues = {
   tankerNation: string
   tankerType: string
   tankerModel: string
@@ -15,7 +15,7 @@ type PlannerFormValues = {
   receiverModel: string
 }
 
-type PlannerResultRow = {
+type ViewerResultRow = {
   nationOrg: string
   tanker_type: string
   tanker_model: string
@@ -36,7 +36,7 @@ type PlannerResultRow = {
   notes: string
 }
 
-const EMPTY_FORM: PlannerFormValues = {
+const EMPTY_FORM: ViewerFormValues = {
   tankerNation: '',
   tankerType: '',
   tankerModel: '',
@@ -56,9 +56,9 @@ const RECEIVER_MODEL_OPTIONS: Record<string, string[]> = {
   'F-35': ['A'],
   'C-17': ['A'],
 }
-// Show the planner page.
-export default function PlannerPage({ onLogout }: PlannerPageProps) {
-  const [formValues, setFormValues] = useState<PlannerFormValues>(EMPTY_FORM)
+// Show the viewer page.
+export default function ViewerPage({ onLogout }: ViewerPageProps) {
+  const [formValues, setFormValues] = useState<ViewerFormValues>(EMPTY_FORM)
   const [isLoading, setIsLoading] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -83,7 +83,7 @@ export default function PlannerPage({ onLogout }: PlannerPageProps) {
   }
 
   // Build the table row based on the selected fields.
-  const buildResultRow = (values: PlannerFormValues) => ({
+  const buildResultRow = (values: ViewerFormValues) => ({
     nationOrg: [values.tankerNation, values.receiverNation]
       .filter(Boolean)
       .join(' / '),
@@ -99,7 +99,7 @@ export default function PlannerPage({ onLogout }: PlannerPageProps) {
     boom_pod_BDA: '',
     min_alt: '',
     max_alt: '',
-    min_as: '',
+    min_as_kcas: '',
     max_as_kcas: '',
     max_as_m: '',
     fuel_flow_rate: '',
@@ -115,7 +115,7 @@ export default function PlannerPage({ onLogout }: PlannerPageProps) {
     setIsLoading(true)
     setError('')
     try {
-      await searchPlanner(formValues)
+      await searchViewer(formValues)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Search failed.')
     } finally {
@@ -128,7 +128,7 @@ export default function PlannerPage({ onLogout }: PlannerPageProps) {
     setIsSubmitting(true)
     setError('')
     try {
-      await submitPlannerRequest(formValues)
+      await submitViewerRequest(formValues)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Submit failed.')
     } finally {
@@ -155,22 +155,22 @@ export default function PlannerPage({ onLogout }: PlannerPageProps) {
     <div className="role-page">
       <header className="role-page__header">
         <div>
-          <span className="role-pill">Planner</span>
+          <span className="role-pill">Viewer</span>
           <h1 className="role-page__title">Viewer</h1>
         </div>
         <button className="btn ghost" type="button" onClick={onLogout}>
-          Uitloggen
+          Logout
         </button>
       </header>
 
       <section className="role-card">
-        <p className="planner-intro">
+        <p className="viewer-intro">
           Enter the tanker and receiver details below, then press Search to
           review compatible options.
         </p>
-        <form className="planner-form" onSubmit={handleSubmit}>
-          <div className="planner-form__grid">
-            <label className="planner-field">
+        <form className="viewer-form" onSubmit={handleSubmit}>
+          <div className="viewer-form__grid">
+            <label className="viewer-field">
               <span>Tanker Nation:</span>
               <select
                 name="tankerNation"
@@ -188,7 +188,7 @@ export default function PlannerPage({ onLogout }: PlannerPageProps) {
                 ))}
               </select>
             </label>
-            <label className="planner-field">
+            <label className="viewer-field">
               <span>Tanker Type:</span>
               <select
                 name="tankerType"
@@ -206,7 +206,7 @@ export default function PlannerPage({ onLogout }: PlannerPageProps) {
                 ))}
               </select>
             </label>
-            <label className="planner-field">
+            <label className="viewer-field">
               <span>Tanker Model:</span>
               <select
                 name="tankerModel"
@@ -224,7 +224,7 @@ export default function PlannerPage({ onLogout }: PlannerPageProps) {
                 ))}
               </select>
             </label>
-            <label className="planner-field">
+            <label className="viewer-field">
               <span>Receiver Nation:</span>
               <select
                 name="receiverNation"
@@ -242,7 +242,7 @@ export default function PlannerPage({ onLogout }: PlannerPageProps) {
                 ))}
               </select>
             </label>
-            <label className="planner-field">
+            <label className="viewer-field">
               <span>Receiver Type:</span>
               <select
                 name="receiverType"
@@ -260,7 +260,7 @@ export default function PlannerPage({ onLogout }: PlannerPageProps) {
                 ))}
               </select>
             </label>
-            <label className="planner-field">
+            <label className="viewer-field">
               <span>Receiver Model:</span>
               <select
                 name="receiverModel"
@@ -279,8 +279,8 @@ export default function PlannerPage({ onLogout }: PlannerPageProps) {
               </select>
             </label>
           </div>
-          {error && <p className="planner-error">{error}</p>}
-          <div className="planner-form__footer">
+          {error && <p className="viewer-error">{error}</p>}
+          <div className="viewer-form__footer">
             <button className="btn primary" type="submit">
               {isLoading ? 'Searching...' : 'Search'}
             </button>
@@ -297,16 +297,10 @@ export default function PlannerPage({ onLogout }: PlannerPageProps) {
       </section>
 
       <section className="role-card">
-        <p className="planner-intro">Results based on your selections.</p>
+        <p className="viewer-intro">Results based on your selections.</p>
         <div className="table-wrap">
-          <table className="engineer-table planner-table">
+          <table className="srd_holder-table viewer-table">
             <colgroup>
-              <col className="col-nation" />
-              <col className="col-type" />
-              <col className="col-model" />
-              <col className="col-recv" />
-              <col className="col-type" />
-              <col className="col-model" />
               <col className="col-minfl" />
               <col className="col-minfl" />
               <col className="col-tanker" />
@@ -322,24 +316,6 @@ export default function PlannerPage({ onLogout }: PlannerPageProps) {
             </colgroup>
             <thead>
               <tr>
-                <th>
-                  <span title="Nation / Organisation">nation/org</span>
-                </th>
-                <th>
-                  <span title="Tanker type">T_type</span>
-                </th>
-                <th>
-                  <span title="Tanker model">T_model</span>
-                </th>
-                <th>
-                  <span title="Receiver nation">R_nation</span>
-                </th>
-                <th>
-                  <span title="Receiver type">R_type</span>
-                </th>
-                <th>
-                  <span title="Receiver model">R_model</span>
-                </th>
                 <th>
                   <span title="Compatibility tanker code">C_tanker</span>
                 </th>
@@ -362,7 +338,7 @@ export default function PlannerPage({ onLogout }: PlannerPageProps) {
                   <span title="Maximum altitude">max_alt</span>
                 </th>
                 <th>
-                  <span title="Minimum airspeed">min_as</span>
+                  <span title="Minimum airspeed">min_as_kcas</span>
                 </th>
                 <th>
                   <span title="Maximum airspeed (KCAS)">max_as_kcas</span>
@@ -380,12 +356,6 @@ export default function PlannerPage({ onLogout }: PlannerPageProps) {
             </thead>
             <tbody>
               <tr>
-                <td data-label="nation/org">{liveRow.nationOrg}</td>
-                <td data-label="tanker_type">{liveRow.tanker_type}</td>
-                <td data-label="tanker_model">{liveRow.tanker_model}</td>
-                <td data-label="receiver_nation">{liveRow.receiver_nation}</td>
-                <td data-label="receiver_type">{liveRow.receiver_type}</td>
-                <td data-label="receiver_model">{liveRow.receiver_model}</td>
                 <td data-label="c_tanker">{liveRow.c_tanker}</td>
                 <td data-label="c_receiver">{liveRow.c_receiver}</td>
                 <td data-label="v_srd_tanker">{liveRow.v_srd_tanker}</td>
@@ -406,3 +376,5 @@ export default function PlannerPage({ onLogout }: PlannerPageProps) {
     </div>
   )
 }
+
+

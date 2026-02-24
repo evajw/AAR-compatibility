@@ -1,19 +1,19 @@
-import { useState, type FormEvent } from 'react'
+﻿import { useState, type FormEvent } from 'react'
 import Header from '../Components/Layout/Header'
 import Footer from '../Components/Layout/Footer'
 import AdminPage from './Admin'
-import EngineerPage from './Engineer'
-import PlannerPage from './Planner'
+import SRD_holderPage from './SRD_holder'
+import ViewerPage from './Viewer'
 import PictureAAR from '../Assets/Picture AAR.jpg'
 import '../Styles/login.css'
 
-type Role = 'admin' | 'engineer' | 'planner'
+type Role = 'admin' | 'srd_holder' | 'viewer'
 type Step = 'select' | 'login' | 'dashboard'
 
 const ROLE_OPTIONS: Array<{ key: Role; title: string }> = [
   { key: 'admin', title: 'Admin' },
-  { key: 'engineer', title: 'SRD Holder' },
-  { key: 'planner', title: 'Viewer' },
+  { key: 'srd_holder', title: 'SRD Holder' },
+  { key: 'viewer', title: 'Viewer' },
 ]
 
 const ROLE_DETAILS: Record<
@@ -26,16 +26,16 @@ const ROLE_DETAILS: Record<
     highlight: 'Verifieer je account om verder te gaan.',
     quick: 'Prioriteer accounts, rollen en audits.',
   },
-  engineer: {
+  srd_holder: {
     label: 'SRD Holder',
     intro: 'Je krijgt toegang tot technische flows en tooling.',
     highlight: 'Log in om je workbench te openen.',
     quick: "Werk aan tickets, risico's en releases.",
   },
-  planner: {
+  viewer: {
     label: 'Vieuwer',
     intro: 'Je hebt directe toegang tot de planning.',
-    highlight: 'Geen login nodig voor planners.',
+    highlight: 'Geen login nodig voor viewers.',
     quick: 'Start direct met inplannen.',
   },
 }
@@ -51,8 +51,8 @@ type AuthResult = { ok: boolean; message?: string }
 const DEMO_ACCOUNTS: Record<Role, { username: string; password: string } | null> =
   {
     admin: { username: 'admin', password: '12345' },
-    engineer: { username: 'engineer', password: '12345' },
-    planner: null,
+    srd_holder: { username: 'srd_holder', password: '12345' },
+    viewer: null,
   }
 
 // Controleert of demo-gegevens overeenkomen met de geselecteerde rol.
@@ -87,7 +87,7 @@ export default function Login() {
   const handleRoleSelect = (role: Role) => {
     setActiveRole(role)
     setLoginError('')
-    if (role === 'planner') {
+    if (role === 'viewer') {
       setStep('dashboard')
     } else {
       setStep('login')
@@ -131,10 +131,10 @@ export default function Login() {
         {showRolePage ? (
           activeRole === 'admin' ? (
             <AdminPage onLogout={handleReset} />
-          ) : activeRole === 'engineer' ? (
-            <EngineerPage onLogout={handleReset} />
+          ) : activeRole === 'srd_holder' ? (
+            <SRD_holderPage onLogout={handleReset} />
           ) : (
-            <PlannerPage onLogout={handleReset} />
+            <ViewerPage onLogout={handleReset} />
           )
         ) : (
           <section className="login-card" aria-live="polite">
@@ -220,3 +220,5 @@ export default function Login() {
     </div>
   )
 }
+
+
