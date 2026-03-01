@@ -1,33 +1,118 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from 'react'
 import '../Styles/role-pages.css'
 import {
   loadSubmissions,
+  updateSubmission,
   updateSubmissionStatus,
-  type EngineerSubmission,
+  type SRD_holderFormValues,
+  type SRD_holderSubmission,
 } from '../Services/submissionService'
 
 type AdminPageProps = {
   onLogout: () => void
 }
 
-// Show the admin review page.
-export default function AdminPage({ onLogout }: AdminPageProps) {
-  const [submissions, setSubmissions] = useState<EngineerSubmission[]>([])
+const REFUEL_INTERFACE_OPTIONS = ['Boom', 'Pod', 'HDU', 'Centre Line (CL)']
+const C_CATEGORY_OPTIONS = ['Cat-1', 'Cat-2', 'Cat-3']
+const NATION_OPTIONS = ['MMF', 'Australie']
+const TANKER_TYPE_OPTIONS = ['A330 MRTT']
+const TANKER_MODEL_OPTIONS: Record<string, string[]> = {
+  'A330 MRTT': ['KC-30M', 'KC-30A'],
+}
+const RECEIVER_TYPE_OPTIONS = ['F-16', 'F-35', 'C-17']
+const RECEIVER_MODEL_OPTIONS: Record<string, string[]> = {
+  'F-16': ['A', 'B', 'C'],
+  'F-35': ['A'],
+  'C-17': ['A'],
+}
 
-  // Load forms that were submitted by Engineers.
+// Render the Admin review page.
+export default function AdminPage({ onLogout }: AdminPageProps) {
+  const [submissions, setSubmissions] = useState<SRD_holderSubmission[]>([])
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editValues, setEditValues] = useState<SRD_holderFormValues | null>(null)
+  const [editError, setEditError] = useState('')
+
+  // Load existing submissions when the page opens.
   useEffect(() => {
     setSubmissions(loadSubmissions())
   }, [])
 
-  // Mark a submission as approved.
+  // Mark one submission as approved.
   const handleApprove = (id: string) => {
-    setSubmissions(updateSubmissionStatus(id, 'Goedgekeurd'))
+    setSubmissions(updateSubmissionStatus(id, 'Approved'))
   }
 
-  // Mark a submission as rejected.
+  // Mark one submission as rejected.
   const handleReject = (id: string) => {
-    setSubmissions(updateSubmissionStatus(id, 'Afgewezen'))
+    setSubmissions(updateSubmissionStatus(id, 'Rejected'))
   }
+
+  // Start editing one submission in the admin form.
+  const handleStartEdit = (submission: SRD_holderSubmission) => {
+    const { id, status, createdAt, ...values } = submission
+    void id
+    void status
+    void createdAt
+    setEditingId(submission.id)
+    setEditValues(values)
+    setEditError('')
+  }
+
+  // Track admin changes in the edit form.
+  const handleEditChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = event.target
+    setEditValues((prev) => {
+      if (!prev) return prev
+      if (name === 'tankerType') {
+        return { ...prev, tankerType: value, tankerModel: '' }
+      }
+      if (name === 'receiverType') {
+        return { ...prev, receiverType: value, receiverModel: '' }
+      }
+      return { ...prev, [name]: value }
+    })
+  }
+
+  // Save all admin edits for the selected submission.
+  const handleSaveEdit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!editingId || !editValues) return
+    const allFilled = Object.values(editValues).every((value) => value.trim().length > 0)
+    if (!allFilled) {
+      setEditError('Fill in all fields before saving.')
+      return
+    }
+    setSubmissions(updateSubmission(editingId, editValues))
+    setEditingId(null)
+    setEditValues(null)
+    setEditError('')
+  }
+
+  // Exit edit mode without saving changes.
+  const handleCancelEdit = () => {
+    setEditingId(null)
+    setEditValues(null)
+    setEditError('')
+  }
+
+  const tankerModelOptions = useMemo(() => {
+    if (!editValues) return []
+    if (editValues.tankerType) {
+      return TANKER_MODEL_OPTIONS[editValues.tankerType] ?? []
+    }
+    return []
+  }, [editValues])
+
+  const receiverModelOptions = useMemo(() => {
+    if (!editValues) return []
+    if (editValues.receiverType) {
+      return RECEIVER_MODEL_OPTIONS[editValues.receiverType] ?? []
+    }
+    return []
+  }, [editValues])
 
   return (
     <div className="role-page">
@@ -37,30 +122,37 @@ export default function AdminPage({ onLogout }: AdminPageProps) {
           <h1 className="role-page__title">Admin</h1>
         </div>
         <button className="btn ghost" type="button" onClick={onLogout}>
-          Uitloggen
+          Logout
         </button>
       </header>
 
       <section className="role-card">
-        <p className="planner-intro">
-          Review incoming engineer forms and approve or reject them.
+        <p className="viewer-intro">
+          Review incoming srd_holder forms and approve or reject them.
         </p>
         {submissions.length === 0 ? (
           <p className="muted">No forms submitted yet.</p>
         ) : (
           <div className="table-wrap">
-            <table className="engineer-table">
+            <table className="srd_holder-table">
               <colgroup>
                 <col className="col-nation" />
                 <col className="col-type" />
                 <col className="col-model" />
+                <col className="col-nation" />
+                <col className="col-type" />
+                <col className="col-model" />
+                <col className="col-minfl" />
+                <col className="col-minfl" />
+                <col className="col-minfl" />
+                <col className="col-minfl" />
                 <col className="col-refuel" />
-                <col className="col-tanker" />
-                <col className="col-recv" />
                 <col className="col-minfl" />
                 <col className="col-maxfl" />
                 <col className="col-minkcas" />
                 <col className="col-maxkcas" />
+                <col className="col-maxkcas" />
+                <col className="col-fuel" />
                 <col className="col-fuel" />
                 <col className="col-status" />
                 <col className="col-actions" />
@@ -71,19 +163,34 @@ export default function AdminPage({ onLogout }: AdminPageProps) {
                     <span title="Nation / Organisation">Nation/Org</span>
                   </th>
                   <th>
-                    <span title="Aircraft type">A/C type</span>
+                    <span title="Tanker aircraft type">T type</span>
                   </th>
                   <th>
-                    <span title="Aircraft model">A/C model</span>
+                    <span title="Tanker aircraft model">T model</span>
+                  </th>
+                  <th>
+                    <span title="Receiver nation / organisation">R nation</span>
+                  </th>
+                  <th>
+                    <span title="Receiver aircraft type">R type</span>
+                  </th>
+                  <th>
+                    <span title="Receiver aircraft model">R model</span>
+                  </th>
+                  <th>
+                    <span title="Compatibility tanker code">C_tanker</span>
+                  </th>
+                  <th>
+                    <span title="Compatibility receiver code">C_reciever</span>
+                  </th>
+                  <th>
+                    <span title="Valid SRD tanker">V_srd_T</span>
+                  </th>
+                  <th>
+                    <span title="Valid SRD receiver">V_srd_R</span>
                   </th>
                   <th>
                     <span title="Refuelling interface type">Refuel IF</span>
-                  </th>
-                  <th>
-                    <span title="Tanker SRD-category">Tanker SRD</span>
-                  </th>
-                  <th>
-                    <span title="Receiver SRD-category">Recv SRD</span>
                   </th>
                   <th>
                     <span title="Minimum altitude Flight Level">Min FL</span>
@@ -98,9 +205,15 @@ export default function AdminPage({ onLogout }: AdminPageProps) {
                     <span title="Maximum speed KCAS">Max KCAS</span>
                   </th>
                   <th>
+                    <span title="Maximum speed Mach">Max_as_m</span>
+                  </th>
+                  <th>
                     <span title="Planning fuel transfer rate">Fuel rate</span>
                   </th>
-                  <th className="engineer-table__status">Status</th>
+                  <th>
+                    <span title="Comment (max 150 characters)">Comment</span>
+                  </th>
+                  <th className="srd_holder-table__status">Status</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -110,16 +223,17 @@ export default function AdminPage({ onLogout }: AdminPageProps) {
                     <td data-label="Nation/Org">
                       {submission.nationOrganisation}
                     </td>
-                    <td data-label="A/C type">{submission.aircraftType}</td>
-                    <td data-label="A/C model">{submission.aircraftModel}</td>
+                    <td data-label="T type">{submission.tankerType}</td>
+                    <td data-label="T model">{submission.tankerModel}</td>
+                    <td data-label="R nation">{submission.receiverNation}</td>
+                    <td data-label="R type">{submission.receiverType}</td>
+                    <td data-label="R model">{submission.receiverModel}</td>
+                    <td data-label="C_tanker">{submission.cTanker}</td>
+                    <td data-label="C_reciever">{submission.cReciever}</td>
+                    <td data-label="V_srd_T">{submission.vSrdT}</td>
+                    <td data-label="V_srd_R">{submission.vSrdR}</td>
                     <td data-label="Refuel IF">
                       {submission.refuellingInterface}
-                    </td>
-                    <td data-label="Tanker SRD">
-                      {submission.tankerSrdCategory}
-                    </td>
-                    <td data-label="Recv SRD">
-                      {submission.receiverSrdCategory}
                     </td>
                     <td data-label="Min FL">
                       {submission.minimumFlightLevel}
@@ -129,15 +243,17 @@ export default function AdminPage({ onLogout }: AdminPageProps) {
                     </td>
                     <td data-label="Min KCAS">{submission.minimumKcas}</td>
                     <td data-label="Max KCAS">{submission.maximumKcas}</td>
+                    <td data-label="Max_as_m">{submission.maxAsM}</td>
                     <td data-label="Fuel rate">
                       {submission.planningFuelTransferRate}
                     </td>
-                    <td className="engineer-table__status" data-label="Status">
+                    <td data-label="Comment">{submission.comment}</td>
+                    <td className="srd_holder-table__status" data-label="Status">
                       <span
                         className={`status-tag ${
-                          submission.status === 'Goedgekeurd'
+                            submission.status === 'Approved'
                             ? 'status-tag--approved'
-                            : submission.status === 'Afgewezen'
+                            : submission.status === 'Rejected'
                               ? 'status-tag--rejected'
                               : 'status-tag--pending'
                         }`}
@@ -148,10 +264,17 @@ export default function AdminPage({ onLogout }: AdminPageProps) {
                     <td data-label="Action">
                       <div className="admin-actions">
                         <button
+                          className="btn ghost small"
+                          type="button"
+                          onClick={() => handleStartEdit(submission)}
+                        >
+                          Edit
+                        </button>
+                        <button
                           className="btn small"
                           type="button"
                           onClick={() => handleApprove(submission.id)}
-                          disabled={submission.status === 'Goedgekeurd'}
+                          disabled={submission.status === 'Approved'}
                         >
                           Approve
                         </button>
@@ -159,7 +282,7 @@ export default function AdminPage({ onLogout }: AdminPageProps) {
                           className="btn ghost small"
                           type="button"
                           onClick={() => handleReject(submission.id)}
-                          disabled={submission.status === 'Afgewezen'}
+                          disabled={submission.status === 'Rejected'}
                         >
                           Reject
                         </button>
@@ -170,6 +293,280 @@ export default function AdminPage({ onLogout }: AdminPageProps) {
               </tbody>
             </table>
           </div>
+        )}
+
+        {editValues && (
+          <form className="srd_holder-form" onSubmit={handleSaveEdit}>
+            <div className="role-card__header">
+              <h2>Edit Form</h2>
+              <span className="role-card__meta">ID: {editingId}</span>
+            </div>
+            <div className="srd_holder-form__grid">
+              <label className="input-group">
+                Nation / Org.
+                <select
+                  name="nationOrganisation"
+                  value={editValues.nationOrganisation}
+                  onChange={handleEditChange}
+                  required
+                >
+                  <option value="" disabled>
+                    Select
+                  </option>
+                  {NATION_OPTIONS.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="input-group">
+                T type
+                <select
+                  name="tankerType"
+                  value={editValues.tankerType}
+                  onChange={handleEditChange}
+                  required
+                >
+                  <option value="" disabled>
+                    Select
+                  </option>
+                  {TANKER_TYPE_OPTIONS.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="input-group">
+                T model
+                <select
+                  name="tankerModel"
+                  value={editValues.tankerModel}
+                  onChange={handleEditChange}
+                  required
+                  disabled={!editValues.tankerType}
+                >
+                  <option value="" disabled>
+                    Select
+                  </option>
+                  {tankerModelOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="input-group">
+                R nation
+                <select
+                  name="receiverNation"
+                  value={editValues.receiverNation}
+                  onChange={handleEditChange}
+                  required
+                >
+                  <option value="" disabled>
+                    Select
+                  </option>
+                  {NATION_OPTIONS.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="input-group">
+                R type
+                <select
+                  name="receiverType"
+                  value={editValues.receiverType}
+                  onChange={handleEditChange}
+                  required
+                >
+                  <option value="" disabled>
+                    Select
+                  </option>
+                  {RECEIVER_TYPE_OPTIONS.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="input-group">
+                R model
+                <select
+                  name="receiverModel"
+                  value={editValues.receiverModel}
+                  onChange={handleEditChange}
+                  required
+                  disabled={!editValues.receiverType}
+                >
+                  <option value="" disabled>
+                    Select
+                  </option>
+                  {receiverModelOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="input-group">
+                C_tanker
+                <select
+                  name="cTanker"
+                  value={editValues.cTanker}
+                  onChange={handleEditChange}
+                  required
+                >
+                  <option value="" disabled>
+                    Select
+                  </option>
+                  {C_CATEGORY_OPTIONS.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="input-group">
+                C_reciever
+                <select
+                  name="cReciever"
+                  value={editValues.cReciever}
+                  onChange={handleEditChange}
+                  required
+                >
+                  <option value="" disabled>
+                    Select
+                  </option>
+                  {C_CATEGORY_OPTIONS.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="input-group">
+                V_srd_T
+                <input
+                  type="text"
+                  name="vSrdT"
+                  value={editValues.vSrdT}
+                  onChange={handleEditChange}
+                  required
+                />
+              </label>
+              <label className="input-group">
+                V_srd_R
+                <input
+                  type="text"
+                  name="vSrdR"
+                  value={editValues.vSrdR}
+                  onChange={handleEditChange}
+                  required
+                />
+              </label>
+              <label className="input-group">
+                Refuel interface
+                <select
+                  name="refuellingInterface"
+                  value={editValues.refuellingInterface}
+                  onChange={handleEditChange}
+                  required
+                >
+                  <option value="" disabled>
+                    Select
+                  </option>
+                  {REFUEL_INTERFACE_OPTIONS.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="input-group">
+                Min FL
+                <input
+                  type="text"
+                  name="minimumFlightLevel"
+                  value={editValues.minimumFlightLevel}
+                  onChange={handleEditChange}
+                  required
+                />
+              </label>
+              <label className="input-group">
+                Max FL
+                <input
+                  type="text"
+                  name="maximumFlightLevel"
+                  value={editValues.maximumFlightLevel}
+                  onChange={handleEditChange}
+                  required
+                />
+              </label>
+              <label className="input-group">
+                Min KCAS
+                <input
+                  type="text"
+                  name="minimumKcas"
+                  value={editValues.minimumKcas}
+                  onChange={handleEditChange}
+                  required
+                />
+              </label>
+              <label className="input-group">
+                Max KCAS
+                <input
+                  type="text"
+                  name="maximumKcas"
+                  value={editValues.maximumKcas}
+                  onChange={handleEditChange}
+                  required
+                />
+              </label>
+              <label className="input-group">
+                Max_as_m
+                <input
+                  type="text"
+                  name="maxAsM"
+                  value={editValues.maxAsM}
+                  onChange={handleEditChange}
+                  required
+                />
+              </label>
+              <label className="input-group">
+                Fuel rate
+                <input
+                  type="text"
+                  name="planningFuelTransferRate"
+                  value={editValues.planningFuelTransferRate}
+                  onChange={handleEditChange}
+                  required
+                />
+              </label>
+              <label className="input-group">
+                Comment
+                <textarea
+                  name="comment"
+                  value={editValues.comment}
+                  onChange={handleEditChange}
+                  maxLength={150}
+                  required
+                />
+              </label>
+            </div>
+            {editError && <p className="viewer-error">{editError}</p>}
+            <div className="srd_holder-form__actions">
+              <button className="btn ghost" type="button" onClick={handleCancelEdit}>
+                Cancel
+              </button>
+              <button className="btn primary" type="submit">
+                Save Changes
+              </button>
+            </div>
+          </form>
         )}
       </section>
     </div>
