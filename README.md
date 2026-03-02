@@ -100,11 +100,19 @@ Switching branches is not always possible. If you have been changing inputs in a
 
 ## Run the services
 
-Now you are ready use the repository! 
+Now you are ready use the repository! Here are the steps you need to follow to start the _backend_.
+
 1. Open the docker.desktop application on your device.
 2. Open Visual Studio Code and in the left top corner of your screen open the folder with the git repository in it.
 3. Go to the "docker_compose.yml" file and click on "run all services" at the top of the file. 
 4. Your service will now be running. To check this, open a browser and enter: "localhost:3000".
+
+You can also start the backend in the terminal. To accomplish this run "docker compose up -d". The "-d" detaches the backend from logs in the terminal. If you do want to enable the function of seeing the background of your running code, remove the "-d" from your initial input or run "docker compose logs". If you update your backend code and you want to see this in your terminal, run "docker compose up -d --build". See the header "Docker" for more information.
+
+If you have the backend running. You can now start the _frontend_, too!
+1. In your terminal in VSC go to the relevant folder: "cd .\frontend-AAR\".
+2. In your terminal in VSC run: "npm install".
+3. Lastly, in your terminal in VSC run: "npm run dev". The localhost will start automatically.  
 
 
 ## Database
