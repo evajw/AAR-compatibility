@@ -78,3 +78,47 @@ JOIN receivers r
 JOIN compatibility c 
 	ON c.tanker_id = t.id 
 	AND c.receiver_id = r.id;
+
+	----------------------------------------------------------------------------------
+	--Create Rol en userID table---
+
+	----------------------------------------------------
+-- Roles table
+CREATE TABLE IF NOT EXISTS "Rol" (
+  "RolID" SERIAL PRIMARY KEY,
+  "name" VARCHAR(255) NOT NULL UNIQUE
+);
+
+----------------------------------------------------
+-- Users table
+CREATE TABLE IF NOT EXISTS "User_ID" (
+  "UserID" SERIAL PRIMARY KEY,
+  "name" VARCHAR(255) NOT NULL,
+  "email" VARCHAR(255) NOT NULL UNIQUE,
+  "RolRolID" INT NOT NULL REFERENCES "Rol"("RolID"),
+  "password_hash" VARCHAR(255) NOT NULL
+);
+
+----------------------------------------------------
+-- Insert roles
+INSERT INTO "Rol" ("name")
+VALUES ('admin'), ('srd_holder'), ('viewer')
+ON CONFLICT ("name") DO NOTHING;
+
+----------------------------------------------------
+-- Insert users with hash
+
+INSERT INTO "User_ID" ("name","email","RolRolID","password_hash")
+VALUES
+('Admin','admin@japcc.com',
+ (SELECT "RolID" FROM "Rol" WHERE "name"='admin'),
+ '$2b$10$egRYV7eGB6EDFF7JGIsvzOUbXlz3ta2nO8LrWyvXhn4b3pu6gR4hS'),
+
+('SRD_Holder','srd@mindef.com',
+ (SELECT "RolID" FROM "Rol" WHERE "name"='srd_holder'),
+ '$2b$10$egRYV7eGB6EDFF7JGIsvzOUbXlz3ta2nO8LrWyvXhn4b3pu6gR4hS'),
+
+('Viewer','viewer@japcc.com',
+ (SELECT "RolID" FROM "Rol" WHERE "name"='viewer'),
+ '$2b$10$egRYV7eGB6EDFF7JGIsvzOUbXlz3ta2nO8LrWyvXhn4b3pu6gR4hS')
+ON CONFLICT ("email") DO NOTHING;

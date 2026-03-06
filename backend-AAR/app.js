@@ -4,6 +4,7 @@ const path = require('path');
 const routes = require('./server/routes/index.routes');
 const requestlogger = require('./server/middlewares/requestlogger.middleware');
 const errorMiddleware = require('./server/middlewares/error.middleware');
+const authRoutes = require('./server/routes/auth.routes');
 const app = express();
 
 
@@ -15,6 +16,7 @@ app.set('views', path.join(__dirname, 'server/views')); // where your EJS files 
 
 
 app.use(requestlogger);
+app.use('/api/auth', authRoutes);
 app.use('/', routes);
 app.use(errorMiddleware);
 

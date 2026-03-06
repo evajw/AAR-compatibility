@@ -120,5 +120,18 @@ If you have the backend running. You can now start the _frontend_, too!
 See [database README](Database/README.md) for database details.
 
 
+# Front-end
 
+## Front-end
+1. Open a terminal in `d:\Visual studio code\AAR-compatibility`.
+2. Go to the frontend folder: `cd frontend-AAR`
+3. Install dependencies: `npm install`
+4. Start the dev server: `npm run dev` (starts Vite and opens the browser)
+5. Otherwise you can click on play button in VSC ![Play buton in VSC](image-1.png)
+5. If it does not open automatically: copy the `Local:` URL from the terminal and open it manually.
+!
+
+# For login to work with jwt
+
+Install: npm i pg dotenv jsonwebtoken bcryptjs
 

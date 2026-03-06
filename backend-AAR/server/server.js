@@ -1,5 +1,5 @@
 // server/server.js
-require('dotenv').config(); // ← load .env at the very top
+require('dotenv').config();
 require('./config/db');
 
 const app = require('../app');
