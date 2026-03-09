@@ -27,7 +27,6 @@ with engine.begin() as conn:
     # 1. Ensure tables exist (Safety first!)
     conn.execute(text(create_tables_sql))
 
-<<<<<<< HEAD
 print("excel-tabbladen succesvol naar PostgreSQL geschreven!")
 =======
     # 2. Clear old data (optional, but prevents duplicates if not using unique constraints)
