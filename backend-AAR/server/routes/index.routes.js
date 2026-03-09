@@ -6,6 +6,7 @@ router.use('/specific_search', require('./specific_search.routes'));
 router.use('/search', require('./pageRoutes'));
 router.use('/change', require('./change.routes'));
 router.use('/', require('./home.routes'));
+router.use('/srd', require('./srd_routes'));
 
 
 module.exports = router;
